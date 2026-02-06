@@ -138,5 +138,5 @@ flowchart LR
   DAL --> DB[PostgreSQL database]
   SVC --> NOTIF[Notification generator]
   BE --> FILES[Optional file storage]
-**```**
+
 
