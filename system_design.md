@@ -1,4 +1,3 @@
-````md
 # System Design
 **Project:** Personal Logistics and Life Administration Tracker  
 **Team:** AdminOPs  
@@ -16,11 +15,12 @@ This document translates the project requirements into a technical design. The s
 
 ### 2.1 Architecture Style
 Client–server application using a layered design:
-- **Presentation Layer:** React + TypeScript UI
-- **API Layer:** Express REST API (controllers/routes)
-- **Service Layer:** Business logic (recurrence, urgency/status, notifications)
-- **Data Access Layer:** DB queries/repositories
-- **Database Layer:** PostgreSQL
+
+- **Presentation Layer:** React + TypeScript UI  
+- **API Layer:** Express REST API (controllers/routes)  
+- **Service Layer:** Business logic (recurrence, urgency/status, notifications)  
+- **Data Access Layer:** DB queries/repositories  
+- **Database Layer:** PostgreSQL  
 
 ### 2.2 High-Level Architecture Diagram
 ```mermaid
@@ -29,7 +29,7 @@ flowchart LR
   BE --> AUTH[Auth - JWT middleware]
   BE --> SVC[Service layer - business logic]
   SVC --> DAL[Data access layer]
-  DAL --> DB[PostgreSQL database]
+  DAL --> DB[(PostgreSQL database)]
   SVC --> NOTIF[Notification generator]
   BE --> FILES[Optional file storage]
 ```
@@ -68,7 +68,7 @@ flowchart LR
 - `tags` (id, user_id, name)
 - `item_tags` (item_id, tag_id)
 - `notifications` (id, user_id, item_id, type, message, is_read, created_at)
-- optional: `attachments` (id, item_id, filename, mime_type, size_bytes, storage_path, uploaded_at)
+- `attachments` (optional) (id, item_id, filename, mime_type, size_bytes, storage_path, uploaded_at)
 
 ### 4.2 ER Diagram
 ```mermaid
@@ -92,13 +92,13 @@ erDiagram
 ## 5. Core Business Logic Design
 
 ### 5.1 Status and Urgency Rules
-Statuses:
+**Statuses:**
 - `pending`
 - `completed`
 - `overdue`
 - `archived`
 
-Rules:
+**Rules:**
 - An item is **overdue** if `due_date < today` AND status is not `completed` or `archived`.
 - Dashboard time windows:
   - **Overdue:** overdue items
@@ -106,28 +106,27 @@ Rules:
   - **Upcoming:** due within next 30 days (excluding due soon)
 
 ### 5.2 Recurrence Engine
-Supported recurrence:
+**Supported recurrence:**
 - `none`
 - `weekly`
 - `monthly`
 - `yearly`
 
-Generation rule:
-- When a recurring item is marked `completed`, generate the next occurrence:
-  - weekly: `due_date + 7 days`
-  - monthly: same day next month (clamp to last valid day if needed)
-  - yearly: same month/day next year (handle leap-year rules)
+**Generation rule (on completion):**
+- weekly: `due_date + 7 days`
+- monthly: same day next month (clamp to last valid day if needed)
+- yearly: same month/day next year (handle leap-year rules)
 
-Duplicate prevention (idempotency):
+**Duplicate prevention (idempotency):**
 - Add a field like `generated_from_item_id` on the newly created occurrence and enforce uniqueness, OR
 - Store `last_completed_at` and check before generating the next occurrence.
 
 ### 5.3 Notification Generator
-Notification events:
+**Notification events:**
 - Due soon thresholds (example: 7/3/1 days before due date)
 - Overdue detection (due date passed)
 
-Implementation approach:
+**Implementation approach:**
 - MVP: generate due-soon and overdue notifications when loading the dashboard and/or on item updates.
 - Optional stretch: scheduled job runs daily to generate notifications.
 
@@ -188,18 +187,18 @@ sequenceDiagram
 
 ---
 
-## 8. Data Structures and Algorithms (CS Core)
+## 8. Data Structures and Algorithms
 - **Sorting / ordering:** order items by due date for “Next Due” and dashboard sections.
-- **Urgency computation:** calculate `days_until_due` and map to urgency tiers (overdue/due soon/upcoming).
-- **Recurrence algorithm:** deterministic weekly/monthly/yearly date generation with edge case handling (month length and leap years).
-- **Efficient filtering:** indexed queries by user_id, status, due_date, and tag joins.
+- **Urgency computation:** compute `days_until_due` and map to urgency tiers (overdue/due soon/upcoming).
+- **Recurrence algorithm:** weekly/monthly/yearly date generation with edge-case handling (month length and leap years).
+- **Efficient filtering:** indexed queries by `user_id`, `status`, `due_date`, and tag joins.
 
 ---
 
 ## 9. Security Design
 - Password hashing using bcrypt (never store plaintext passwords)
 - JWT authentication for protected endpoints
-- Authorization checks on every request to ensure user data isolation (user_id)
+- Authorization checks on every request to ensure user data isolation (`user_id`)
 - Input validation on POST/PUT endpoints (server-side)
 - Optional file uploads (if implemented):
   - strict file type allowlist
@@ -208,31 +207,33 @@ sequenceDiagram
 
 ---
 
-## 10. Deployment and Configuration (Class-Level)
-Local development:
+## 10. Deployment and Configuration
+**Local development:**
 - Frontend runs on a dev server
 - Backend runs on Node/Express
 - PostgreSQL runs locally or via Docker
 
-Environment variables (example):
+**Environment variables (example):**
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `PORT`
 
 ---
 
-## 11. Testing Plan (Design-Level)
-- **Unit tests (Jest):**
-  - recurrence date generation
-  - overdue/urgency calculations
-  - notification generation rules
-- **Integration tests (Supertest):**
-  - register/login
-  - protected routes
-  - item lifecycle: create → complete → recurrence generates next
-  - dashboard summary correctness
-- **Manual user testing:**
-  - short checklist to validate core workflows and usability
+## 11. Testing Plan
+**Unit tests (Jest):**
+- recurrence date generation
+- overdue/urgency calculations
+- notification generation rules
+
+**Integration tests (Supertest):**
+- register/login
+- protected routes
+- item lifecycle: create → complete → recurrence generates next
+- dashboard summary correctness
+
+**Manual user testing:**
+- short checklist to validate core workflows and usability
 
 ---
 
@@ -240,4 +241,3 @@ Environment variables (example):
 - `system_design.md` (this document)
 - Mermaid diagrams included (architecture, ER, sequence)
 - API endpoint list to guide implementation
-````
