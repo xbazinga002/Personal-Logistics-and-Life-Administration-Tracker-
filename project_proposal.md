@@ -131,12 +131,12 @@ Suggested libraries:
 ### High-Level Architecture Diagram
 ```mermaid
 flowchart LR
-  UI[React + TypeScript UI] --> API[Express REST API]
-  API --> Auth[Auth Middleware - JWT]
-  API --> Services[Service Layer - Business Logic]
-  Services --> Repo[Repository - Data Access]
-  Repo --> DB[(PostgreSQL)]
-  Services --> Notify[Notification Generator]
-  API --> Files[Optional File Storage]
-
+  FE[Frontend - React and TypeScript] --> BE[Backend - Express REST API]
+  BE --> AUTH[Auth - JWT middleware]
+  BE --> SVC[Service layer - business logic]
+  SVC --> DAL[Data access layer]
+  DAL --> DB[PostgreSQL database]
+  SVC --> NOTIF[Notification generator]
+  BE --> FILES[Optional file storage]
+**```**
 
