@@ -132,10 +132,11 @@ Suggested libraries:
 ```mermaid
 flowchart LR
   UI[React + TypeScript UI] --> API[Express REST API]
-  API --> Auth[Auth Middleware (JWT)]
-  API --> Services[Service Layer (Business Logic)]
-  Services --> Repo[Repository / Data Access]
+  API --> Auth[Auth Middleware - JWT]
+  API --> Services[Service Layer - Business Logic]
+  Services --> Repo[Repository - Data Access]
   Repo --> DB[(PostgreSQL)]
   Services --> Notify[Notification Generator]
-  API --> Files[(Optional File Storage)]
+  API --> Files[Optional File Storage]
+
 
